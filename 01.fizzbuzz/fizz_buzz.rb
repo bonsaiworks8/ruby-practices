@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-numbers=[*1..20] # splat展開
+numbers = [*1..20]
 
 numbers.each do |number|
   if number % 15 == 0
