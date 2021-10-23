@@ -2,10 +2,10 @@
 # frozen_string_literal: true
 
 def main
-  MyFile.new(ARGV[0]).show_list
+  Command.new(ARGV[0]).show_list
 end
 
-class MyFile
+class Command
   MAX_COL = 3
   MAX_LENGTH = 24
 
@@ -18,26 +18,28 @@ class MyFile
     return unless exist?
 
     files = list_up
-    max_row = (files.length / MAX_COL) + 1
 
-    col = 1
+    max_row = if (files.length % MAX_COL).zero?
+                files.length / MAX_COL
+              else
+                files.length / MAX_COL + 1
+              end
+
     row = 1
-    h = {}
-    h.default = ''
+    lines = Array.new(max_row, '')
     files.each do |file|
-      h[row.to_s] = h[row.to_s] + file.ljust(MAX_LENGTH)
+      lines[row - 1] = lines[row - 1] + file.ljust(MAX_LENGTH)
       row += 1
 
-      if row > max_row
-        col += 1
-        row = 1
-      end
+      row = 1 if row > max_row
     end
 
-    h.each_value do |value|
-      puts value
+    lines.each do |line|
+      puts line
     end
   end
+
+  private
 
   def exist?
     result = Dir.exist?(@path)
