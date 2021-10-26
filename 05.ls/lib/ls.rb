@@ -19,19 +19,15 @@ class Command
 
     files = list_up
 
-    max_row = if (files.length % MAX_COL).zero?
-                files.length / MAX_COL
-              else
-                files.length / MAX_COL + 1
-              end
+    max_row = (files.length / MAX_COL.to_f).ceil
 
-    row = 1
+    row = 0
     lines = Array.new(max_row, '')
     files.each do |file|
-      lines[row - 1] = lines[row - 1] + file.ljust(MAX_LENGTH)
+      lines[row] = lines[row] + file.ljust(MAX_LENGTH)
       row += 1
 
-      row = 1 if row > max_row
+      row = 0 if row >= max_row
     end
 
     lines.each do |line|
