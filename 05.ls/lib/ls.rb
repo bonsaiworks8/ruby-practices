@@ -1,15 +1,19 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 def main
-  Command.new(ARGV[0]).show_list
+  options = ARGV.getopts('r')
+  Command.new(options, ARGV[0]).show_list
 end
 
 class Command
   MAX_COL = 3
   MAX_LENGTH = 24
 
-  def initialize(path)
+  def initialize(options, path)
+    @options = options
     path ||= '.'
     @path = path
   end
@@ -46,8 +50,10 @@ class Command
   end
 
   def list_up
-    Dir.children(@path).sort.reject do |file|
-      file.start_with?('.')
+    if @options['r']
+      Dir.glob('*', base: @path).reverse
+    else
+      Dir.glob('*', base: @path)
     end
   end
 end
