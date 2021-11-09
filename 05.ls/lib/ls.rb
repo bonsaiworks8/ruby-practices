@@ -40,11 +40,11 @@ class Command
   def show_list
     return unless exist?
 
-    if @options['l']
-      lines = list_up
-    else
-      files = list_up
+    files = list_up
 
+    if @options['l']
+      lines = list_up_details files
+    else
       max_row = (files.length / MAX_COL.to_f).ceil
 
       row = 0
@@ -73,11 +73,7 @@ class Command
   end
 
   def list_up
-    files = Dir.glob('*', base: @path)
-
-    files = list_up_details files if @options['l']
-
-    files
+    Dir.glob('*', base: @path)
   end
 
   def list_up_details(files)
@@ -95,17 +91,16 @@ class Command
 
       file_type = FILE_TYPE_TABLE[numbers[0][0]]
       permission = PERMISSION_TABLE[numbers[0][2]] + PERMISSION_TABLE[numbers[0][3]] + PERMISSION_TABLE[numbers[0][4]]
-      hardlink = stat.nlink.to_s
+      hardlink = stat.nlink.to_s.rjust(hardlink_digits + 1) # lsコマンドにスペースの数を合わせるため+1
       username = Etc.getpwuid(stat.uid).name
-      groupname = Etc.getgrgid(stat.gid).name
-      size = stat.size.to_s
+      gn = Etc.getgrgid(stat.gid).name
+      groupname = gn.rjust(gn.length + 1)
+      size = stat.size.to_s.rjust(size_digits + 1)
+      date_and_time = [stat.mtime.month, stat.mtime.day, stat.mtime.hour, ':', stat.mtime.min].map(&:to_s)
 
-      date_and_time = stat.mtime.month.to_s.concat(' ', stat.mtime.day.to_s, ' ', stat.mtime.hour.to_s, ':', stat.mtime.min.to_s)
       total_blocks += stat.blocks
 
-      line = +''
-      line.concat(file_type, permission, '  ', hardlink.rjust(hardlink_digits), ' ', username, '  ', groupname, '  ', size.rjust(size_digits), ' ',
-                  date_and_time, ' ', file)
+      [file_type + permission, hardlink, username, groupname, size, *date_and_time, file].join(' ').gsub(' : ', ':')
     end
 
     lines.unshift((+'total ').concat(total_blocks.to_s))
