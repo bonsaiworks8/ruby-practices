@@ -42,20 +42,11 @@ class Command
 
     files = list_up
 
-    if @options['l']
-      lines = list_up_details files
-    else
-      max_row = (files.length / MAX_COL.to_f).ceil
-
-      row = 0
-      lines = Array.new(max_row, '')
-      files.each do |file|
-        lines[row] = lines[row] + file.ljust(MAX_LENGTH)
-        row += 1
-
-        row = 0 if row >= max_row
-      end
-    end
+    lines = if @options['l']
+              create_detailed_format files
+            else
+              create_list_format files
+            end
 
     lines.each do |line|
       puts line
@@ -76,7 +67,22 @@ class Command
     Dir.glob('*', base: @path)
   end
 
-  def list_up_details(files)
+  def create_list_format(files)
+    max_row = (files.length / MAX_COL.to_f).ceil
+
+    row = 0
+    lines = Array.new(max_row, '')
+    files.each do |file|
+      lines[row] = lines[row] + file.ljust(MAX_LENGTH)
+      row += 1
+
+      row = 0 if row >= max_row
+    end
+
+    lines
+  end
+
+  def create_detailed_format(files)
     # ハードリンクとファイルサイズ各々で最大の桁数を求める
     hardlink_digits, size_digits = count_digits files
 
