@@ -4,7 +4,7 @@
 require 'optparse'
 
 def main
-  options = ARGV.getopts('a')
+  options = ARGV.getopts('ar')
   Command.new(options, ARGV[0]).show_list
 end
 
@@ -50,12 +50,12 @@ class Command
   end
 
   def list_up
-    Dir.foreach(@path).sort.reject do |file|
-      if @options['a']
-        false
-      else
-        file.start_with?('.')
-      end
+    if @options['a']
+      Dir.glob("*", File::FNM_DOTMATCH, base: @path)
+    elsif @options['r']
+      Dir.glob('*', base: @path).reverse
+    else
+      Dir.glob('*', base: @path)
     end
   end
 end

@@ -22,6 +22,14 @@ class LsTest < Minitest::Test
     Gemfile.lock            config#{'                  '}
   OUTPUT2
 
+  # ls -r コマンドでの../sampleディレクトリ内のファイルの出力
+  OUTPUT_TEST3 = <<~OUTPUT3.freeze
+    postcss.config.js       config                  Procfile#{'                '}
+    package.json            bin                     Gemfile.lock#{'            '}
+    log                     babel.config.js         Gemfile#{'                 '}
+    config.ru               README.md#{'               '}
+  OUTPUT3
+
   def test_ls1
     options = {}
     assert_output(OUTPUT_TEST1) { Command.new(options, ARGV[0]).show_list }
@@ -30,5 +38,10 @@ class LsTest < Minitest::Test
   def test_ls2
     options = { 'a' => true }
     assert_output(OUTPUT_TEST2) { Command.new(options, ARGV[0]).show_list }
+  end
+
+  def test_ls3
+    options = { 'r' => true }
+    assert_output(OUTPUT_TEST3) { Command.new(options, ARGV[0]).show_list }
   end
 end
