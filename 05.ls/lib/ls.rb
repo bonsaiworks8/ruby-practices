@@ -98,8 +98,7 @@ class Command
       gn = Etc.getgrgid(stat.gid).name
       groupname = gn.rjust(gn.length + 1)
       size = stat.size.to_s.rjust(size_digits + 1)
-      date_and_time = [stat.mtime.month, stat.mtime.day, stat.mtime.hour, ':', stat.mtime.min].map(&:to_s)
-
+      date_and_time = [stat.mtime.month, stat.mtime.day, stat.mtime.hour.to_s.rjust(2, '0'), ':', stat.mtime.min.to_s.rjust(2, '0')].map(&:to_s)
       total_blocks += stat.blocks
 
       [file_type + permission, hardlink, username, groupname, size, *date_and_time, file].join(' ').gsub(' : ', ':')
