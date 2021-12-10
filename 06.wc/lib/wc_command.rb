@@ -9,26 +9,7 @@ class WcCommand
   end
 
   def execute
-    if @paths.size.positive?
-      total_line_count = 0
-      total_word_count = 0
-      total_byte_size = 0
-      @paths.each do |path|
-        line_count, word_count, byte_size = count_each_number File.readlines(path)
-
-        total_line_count += line_count
-        total_word_count += word_count
-        total_byte_size += byte_size
-
-        print_each_number line_count, word_count, byte_size, path
-      end
-
-      print_each_number total_line_count, total_word_count, total_byte_size, 'total' if @paths.size > 1
-    else
-      line_count, word_count, byte_size = count_each_number readlines
-
-      print_each_number line_count, word_count, byte_size
-    end
+    @paths.size.positive? ? print_multiple_file_format : print_single_file_format
   end
 
   private
@@ -59,5 +40,27 @@ class WcCommand
 
   def format_digits(value)
     value.to_s.rjust(MAX_DIGITS)
+  end
+
+  def print_single_file_format
+    line_count, word_count, byte_size = count_each_number readlines
+    print_each_number line_count, word_count, byte_size
+  end
+
+  def print_multiple_file_format
+    total_line_count = 0
+    total_word_count = 0
+    total_byte_size = 0
+    @paths.each do |path|
+      line_count, word_count, byte_size = count_each_number File.readlines(path)
+
+      total_line_count += line_count
+      total_word_count += word_count
+      total_byte_size += byte_size
+
+      print_each_number line_count, word_count, byte_size, path
+    end
+
+    print_each_number total_line_count, total_word_count, total_byte_size, 'total' if @paths.size > 1
   end
 end

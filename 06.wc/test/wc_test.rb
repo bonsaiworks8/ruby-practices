@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
-require_relative '../lib/wc'
+require_relative '../lib/wc_command'
 
 class WcTest < Minitest::Test
   WC_TEST_NO_OPTIONS = "       3       9     136 test/sample/sample.txt\n"
