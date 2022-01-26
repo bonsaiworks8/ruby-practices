@@ -9,7 +9,7 @@ class WcCommand
   end
 
   def execute
-    @paths.size.positive? ? print_multiple_file_format : print_single_file_format
+    @paths.size.positive? ? print_in_long_format : print_in_default_format
   end
 
   private
@@ -42,12 +42,12 @@ class WcCommand
     value.to_s.rjust(MAX_DIGITS)
   end
 
-  def print_single_file_format
+  def print_in_default_format
     line_count, word_count, byte_size = count_each_number readlines
     print_each_number line_count, word_count, byte_size
   end
 
-  def print_multiple_file_format
+  def print_in_long_format
     total_line_count = 0
     total_word_count = 0
     total_byte_size = 0
